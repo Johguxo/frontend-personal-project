@@ -1,33 +1,44 @@
 import React, {useContext,useState} from 'react'
 import { Text, View, Button, StyleSheet, Image, TextInput } from 'react-native'
-
-import { UserContext } from '../../../contexts/UserContext'
+import { AppContext } from '../../../contexts/AppContext';
 
 
 const AddNoteScreen = ({navigation, route}) => {
 
-    const {token} = useContext(UserContext)
+    const [text,setText] = useState('');
+    const { state, logOut, newNote, updateNote } = useContext(AppContext);
 
-    const [text,setText] = useState('')
 
-    const listNotes = route.params.listNotes;
-    const setListNotes = route.params.setListNotes;
+    const dateFormat = () => {
+        const dateFormatted = new Date();
+        const day = dateFormatted.getDate();
+        const month = dateFormatted.getMonth() + 1;
+        const year = dateFormatted.getFullYear();
+        return `${day}/${month}/${year}`;
+      }
+    
+    const nowDate = dateFormat()
 
-    const newNote = () => {
-        listNotes.push({description:text});
-        setListNotes(listNotes);
+    const newOrEditNote = () => {
+        if (state.lastNote) {
+            state.lastNote.description.push(text)
+            updateNote(state.lastNote, {description: state.lastNote.description})
+        } else {
+            newNote({title: nowDate, description: [text]})
+        }
         navigation.goBack();
     }
+
 
     return (
         <View style={styles.container}>
             <TextInput 
-                style={{height: 100, borderColor: 'gray', borderWidth: 1, marginBottom:20}} 
+                style={styles.inputText} 
                 onChangeText={(text) => setText(text)} 
                 multiline={true}
                 value={text} 
             />
-            <Button title='Add' onPress={()=>newNote()}/>
+            <Button title='Add' onPress={()=>newOrEditNote()}/>
         </View>
     )
 }
@@ -38,7 +49,6 @@ const styles = StyleSheet.create({
       paddingTop: 20,
       paddingHorizontal: 20,
       backgroundColor: '#F9FBFC',
-
     },
     pic: {
         width: 42,
@@ -53,6 +63,13 @@ const styles = StyleSheet.create({
       marginBottom: 35,
       marginTop: 10,
     },
+    inputText: {
+        padding: 10,
+        height: 100, 
+        borderColor: 'gray', 
+        borderWidth: 1, 
+        marginBottom:20
+    }
 });
 
 export default AddNoteScreen

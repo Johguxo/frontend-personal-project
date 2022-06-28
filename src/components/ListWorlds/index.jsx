@@ -1,12 +1,10 @@
 import React, { useContext, useState } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 
-import { UserContext } from "../../contexts/UserContext";
 import CustomSearchBar from "../CustomSearchBar";
 import CustomWorld from "../CustomWorld";
 
 const ListWorlds = ({ navigation }) => {
-  const { token } = useContext(UserContext);
 
   const [searchPhrase, setSearchPhrase] = useState("");
   const [clicked, setClicked] = useState(false);

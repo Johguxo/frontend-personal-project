@@ -5,23 +5,24 @@ import { NavigationContainer } from '@react-navigation/native'
 import AuthStackNavigator from './AuthStackNavigator'
 import FullStackNavigator from './FullStackNavigator'
 
-import { UserContext } from '../contexts/UserContext';
+import { AppContext } from '../contexts/AppContext';
 import { AuthContext } from '../contexts/AuthContext'
+
+import { useAppState } from '../hooks/useAppState'
 
 const Stack = createNativeStackNavigator()
 
 const MainStack = () => {
 
   const {state} = useContext(AuthContext)
-
   const renderScreens = () => {
-    console.log(state)
+    const initialState = useAppState();
     return state.user ? (
       <Stack.Screen name='FullStackNavigator'>
         {() => (
-          <UserContext.Provider value={state.user}>
+          <AppContext.Provider value={initialState}>
             <FullStackNavigator />
-          </UserContext.Provider>
+          </AppContext.Provider>
         )}
       </Stack.Screen>
     ) : (

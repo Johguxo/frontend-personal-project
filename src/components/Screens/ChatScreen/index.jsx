@@ -1,11 +1,8 @@
 import React, {useContext} from 'react'
 import { Text, View, Button, StyleSheet, Image } from 'react-native'
-import { UserContext } from '../../../contexts/UserContext'
 
 
 const ChatScreen = ({navigation}) => {
-
-    const {token} = useContext(UserContext)
 
     return (
         <View style={styles.container}>

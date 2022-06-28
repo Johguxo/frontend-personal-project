@@ -4,7 +4,6 @@ import { NavigationContainer } from '@react-navigation/native'
 
 import Login from '../components/Login'
 import SignUp from '../components/SignUp'
-import Home from '../components/Home'
 
 const AuthStack = createNativeStackNavigator()
 

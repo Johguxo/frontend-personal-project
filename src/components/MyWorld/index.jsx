@@ -3,10 +3,7 @@ import { Text, View, StyleSheet, TouchableOpacity, FlatList } from "react-native
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import { UserContext } from "../../contexts/UserContext";
-
 const MyWorld = ({ navigation }) => {
-  const { token } = useContext(UserContext);
 
   const world = { title: "Jupiter",
                   description: "Bienvenido a Jupiter, aqui encontraras mis listas especiales de todo lo que me gusta, además que conoceras muchas cosas nuevas, me gusta en general la ciencia ficción.",
