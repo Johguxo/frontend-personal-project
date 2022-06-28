@@ -1,12 +1,62 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import React, {useContext,useState} from 'react'
-import { Text, View, Button, StyleSheet, Image, TouchableHighlight, TouchableOpacity, FlatList } from 'react-native'
+import React, {useContext,useState, useEffect} from 'react'
+import { 
+  Text, 
+  View, 
+  StyleSheet, 
+  Image, 
+  TouchableOpacity, 
+  ActivityIndicator,
+  FlatList } from 'react-native'
 
-import { UserContext } from '../../contexts/UserContext'
+import { AppContext } from '../../contexts/AppContext'
+import { AuthContext } from '../../contexts/AuthContext';
+import { logoutSuccess } from '../../hooks/auth/ApiCalls';
 import CustomWorld from '../CustomWorld';
 
 const Home = ({ navigation }) => {
-  const { token } = useContext(UserContext);
+  const { state, logOut, loadWorld, getLastNote } = useContext(AppContext);
+  const { authState, dispatch} = useContext(AuthContext);
+
+  const [loading, setLoading] = useState(true);
+  const [loadingNote, setLoadingNote] = useState(true);
+
+  let worldName = 'Crear mi mundo';
+  
+  useEffect(()=> {
+    loadWorld();
+    getLastNote();
+  },[])
+
+  useEffect(()=> {
+    if(!state.error && state.world) {
+      if (state.world) {
+        worldName = state.world.name;
+      }
+    }
+    if (state.error) {
+      if (state.error.status == 401) {
+        logoutSuccess(dispatch);
+        logOut();
+      }
+    }
+    setLoading(false);
+  }, [state]);
+
+  useEffect(()=> {
+    if(!state.error && state.lastNote) {
+      setLoadingNote(false);
+    }
+    if (state.error) {
+      if (state.error.status == 401) {
+        logoutSuccess(dispatch);
+        logOut();
+      }
+      if (state.error.status == 404) {
+        setLoadingNote(false);
+      }
+    }
+  }, [state]);
 
   const goToNotification = () => {
     navigation.navigate("Notifications");
@@ -19,6 +69,14 @@ const Home = ({ navigation }) => {
   const goToProfile = () => {
     navigation.navigate("Profile");
   };
+
+  const goToWorld = () => {
+    if (!world) {
+      navigation.navigate("NewWorld");
+    } else {
+      navigation.navigate('MyWorldStack')
+    }
+  }
 
   const LeftAlignedComponent = () => {
     return (
@@ -47,16 +105,7 @@ const Home = ({ navigation }) => {
       </View>
     )
   }
-  const initialNotes = [
-    {description:'Wash my car'},
-    {description:'Pending tasks: Math, Science, Chemistry'},
-    {description:'Walk the dog'},
-    {description:'Take out the trash'},
-    {description:'Clean the kitchen'},
-    {description:'Clean the bathroom'},
-    {description:'Go to the gym'},
-  ]
-  const [listNotes, setListNotes] = useState(initialNotes)
+  
 
   const dateFormat = () => {
     const dateFormatted = new Date();
@@ -69,35 +118,76 @@ const Home = ({ navigation }) => {
   const nowDate = dateFormat()
 
   return (
+    
     <View style={styles.container}>
-      <View style={styles.header}>
-          <LeftAlignedComponent/>
-          <RightAlignedComponent/>
+    { loading ? (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#185ace" />
       </View>
-      <TouchableOpacity onPress={()=>navigation.navigate('MyWorldStack')}>
-        <CustomWorld  title='Jupiter' subtitle='Johann Gonzales' size={200}/>
-      </TouchableOpacity>
-      <View style={[styles.body, styles.shadowProp]}>
-        <Text style={styles.titleNote}>Notas del {nowDate}</Text>
-        <FlatList
-            style={{marginTop: 10,marginHorizontal:10}}
-            data={listNotes}
-            renderItem={({ item }) => {return (
-                <View style={{flexDirection: 'row', marginBottom:3}}>
-                  <Text>{'\u2022'}</Text>
-                  <Text>{item.description}</Text>
-                </View>)}
+      ) : (
+      <>
+        <View style={styles.header}>
+            <LeftAlignedComponent/>
+            <RightAlignedComponent/>
+        </View>
+        <TouchableOpacity 
+        onPress={()=>goToWorld()}>
+          { state.world ?
+                <CustomWorld  
+                title={state.world.name} 
+                subtitle='Johann Gonzales' 
+                size={200}/>
+              :
+                <CustomWorld 
+                title="New World!"
+                subtitle='Johann Gonzales' 
+                size={200}/>
+          }
+        </TouchableOpacity>
+        <View style={[styles.body, styles.shadowProp]}>
+          { loadingNote ?
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#185ace" />
+            </View>
+          :
+            <>
+              <Text style={styles.titleNote}>Notas del {nowDate}</Text> 
+              { state.lastNote ?
+                <FlatList
+                style={{marginTop: 10,marginHorizontal:10}}
+                data={state.lastNote.description}
+                renderItem={({ item }) => {return (
+                    <View style={{flexDirection: 'row', marginBottom:3}}>
+                      <Text>{'\u2022'} </Text>
+                      <Text style={{overflow: 'hidden'}}>{item}</Text>
+                    </View>)}
+                  }
+              />
+              :
+                <Text>No hay notas</Text>
               }
-        />
-      </View>
-      <TouchableOpacity style={styles.buttonAddNote} onPress={()=>navigation.navigate('Add Note',{listNotes,setListNotes})}>
-        <MaterialCommunityIcons name={"plus"}  size={20} color="white" />
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.buttonMoreNotes} onPress={()=>console.log("All Notes")}>
-        <Text style={{textAlign:'center',color:'black',fontWeight: 'bold',}}>
-          Ver Notas Anteriores
-        </Text>
-      </TouchableOpacity>
+            </>
+          }
+          
+        </View>
+        <TouchableOpacity 
+          style={styles.buttonAddNote} 
+          onPress={()=>navigation.navigate('AddNote')}>
+          <MaterialCommunityIcons 
+            name={"plus"}  
+            size={20} 
+            color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.buttonMoreNotes} 
+          onPress={()=>console.log("All Notes")}>
+          <Text 
+            style={{textAlign:'center',color:'black',fontWeight: 'bold',}}>
+            Ver Notas Anteriores
+          </Text>
+        </TouchableOpacity>
+      </>
+    )}
     </View>
   );
 };
@@ -139,6 +229,11 @@ const styles = StyleSheet.create({
     //color: '#fff',
     textAlign: 'center',
     marginTop: 10,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   iconButtonContainer: {
     marginRight: 24,

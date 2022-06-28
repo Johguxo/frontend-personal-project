@@ -2,12 +2,12 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import Home from '../components/Home';
-import CustomHeader from '../components/CustomHeader';
 
 import NotificationsScreen from '../components/Screens/NotificationScreen';
 import ProfileScreen from '../components/Screens/ProfileScreen';
 import ChatScreen from '../components/Screens/ChatScreen';
 import AddNoteScreen from '../components/Screens/AddNoteScreen.jsx';
+import NewWorldScreen from '../components/Screens/NewWorldScreen';
 
 const HomeStack = createNativeStackNavigator()
 
@@ -39,7 +39,12 @@ const HomeStackNavigator = () => {
         component={ChatScreen}
       />
       <HomeStack.Screen
-        name='Add Note'
+        name='NewWorld'
+        options = {{title: 'Create new world'}}
+        component={NewWorldScreen}
+      />
+      <HomeStack.Screen
+        name='AddNote'
         component={AddNoteScreen}
       />
     </HomeStack.Navigator>

@@ -2,12 +2,10 @@ import React, {useContext} from 'react'
 import { Text, View, Button, StyleSheet, Image } from 'react-native'
 
 import { AuthContext } from '../../../contexts/AuthContext'
-import { UserContext } from '../../../contexts/UserContext'
 import { logoutSuccess } from '../../../hooks/auth/ApiCalls'
 
 const ProfileScreen = ({navigation}) => {
 
-    const {token} = useContext(UserContext)
     const { state, dispatch } = useContext(AuthContext)
 
     return (

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -6,9 +6,15 @@ import HomeStackNavigator from './HomeStack'
 import MyWorldStackNavigator from './MyWorldStack'
 import ListWorldsStackNavigator from './ListWorldsStack'
 
+import { AppContext } from '../contexts/AppContext';
+import { AuthContext } from '../contexts/AuthContext';
+
 const FullStack = createMaterialBottomTabNavigator();
 
 const FullStackNavigator = () => {
+
+    const {state} = useContext(AuthContext)
+    useContext(AppContext).state.user = state.user;
     return (
          <FullStack.Navigator
             activeColor="#f0edf6"

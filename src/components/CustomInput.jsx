@@ -1,9 +1,10 @@
 import React from 'react'
 import { View, TextInput, StyleSheet } from 'react-native'
 
-const CustomInput = ({ error, ...props }) => {
+const CustomInput = ({ error, textBox, ...props }) => {
     const inputStyles = [
         styles.input,
+        textBox && styles.inputTextBox,
         error && styles.error,
     ]
     return (
@@ -26,6 +27,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 10,
         marginVertical: 5,
+    },
+    inputTextBox: {
+        height: 100,
+        marginBottom: 20
     },
     error: {
         borderColor: 'red'
