@@ -14,6 +14,45 @@ const INITIAL_STATE = {
 export function useAppState() {
   const [state, setState] = useState(INITIAL_STATE);
 
+  const updateUser = async (payload) => {
+    try {
+      const formData = new FormData();
+      if (payload.firstName) { formData.append('firstName', payload.firstName) }
+      if (payload.lastName) { formData.append('lastName', payload.lastName) }
+      formData.append('_id', state.user._id)
+      if (payload.uri) {
+        formData.append('image',{
+          uri: payload.uri,
+          name: payload.uri.split('/').pop(),
+          type: `image/${payload.uri.split('.').pop()}`,
+        })
+        console.log("dos")
+        console.log("tres")
+        //formData.append('image', payload.uri, `image/${state.user._id}`)
+      }
+
+      const baseUrl = `${BASE_URL}/auth/local/${state.user._id}`
+      console.log(baseUrl)
+      const res = await axios.put(baseUrl, 
+        formData, 
+        { headers:{
+          'Content-Type': 'multipart/form-data',
+          'Authorization':`Bearer ${state.user.token}` },
+      });
+      setState((prevState) => ({
+        ...prevState,
+        user: res.data.data,
+        error: null,
+      }));
+    } catch (err) {
+      console.log(err)
+      setState({
+        ...state,
+        error: err.response
+      })
+    }
+  }
+  
   const loadWorld = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/world`,
@@ -133,6 +172,7 @@ export function useAppState() {
 
   return {
     state,
+    updateUser,
     logOut,
     loadWorld,
     saveWorld,

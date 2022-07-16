@@ -32,7 +32,8 @@ const styles = StyleSheet.create({
 
     },
     text: {
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
     text_PRIMARY: {
         textTransform: 'uppercase',

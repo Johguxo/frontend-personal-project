@@ -7,6 +7,7 @@ import { AuthContext } from '../../../contexts/AuthContext'
 import { logoutSuccess } from '../../../hooks/auth/ApiCalls'
 
 import BottomSheet from 'reanimated-bottom-sheet';
+import Animated from 'react-native-reanimated';
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -16,10 +17,16 @@ const ProfileScreen = ({navigation}) => {
     const { state, updateUser } = useContext(AppContext)
 
     const [image, setImage] = useState('https://res.cloudinary.com/ogcodes/image/upload/v1581387688/m0e7y6s5zkktpceh2moq.jpg');
+    console.log("1")
+    const bs = createRef();
+    console.log("2")
+    const fall = new Animated.Value(1);
+    console.log("3")
 
     const choosePhotoFromLibrary = async  () => {
         // No permissions request is necessary for launching the image library
-
+        
+        bs.current.snapTo(1);
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
@@ -30,6 +37,7 @@ const ProfileScreen = ({navigation}) => {
         if (!result.cancelled) {
             console.log(result)
             setImage(result.uri);
+            console.log(bs)
             //bs.current.snapTo(1);
         }
     }
@@ -50,22 +58,25 @@ const ProfileScreen = ({navigation}) => {
         }
     }
 
-    const RenderInner = () => {
-        return (
-          <View style={styles.panel}>
-            <View style={{alignItems: 'center'}}>
-              <Text style={styles.panelTitle}>Upload Photo</Text>
-              <Text style={styles.panelSubtitle}>Choose Your Profile Picture</Text>
-            </View>
-            <TouchableOpacity style={styles.panelButton} onPress={takePhotoFromCamera}>
-              <Text style={styles.panelButtonTitle}>Take Photo</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.panelButton} onPress={choosePhotoFromLibrary}>
-              <Text style={styles.panelButtonTitle}>Choose From Library</Text>
-            </TouchableOpacity>
+    const renderInner = () => (
+        <View style={styles.panel}>
+          <View style={{alignItems: 'center'}}>
+            <Text style={styles.panelTitle}>Upload Photo</Text>
+            <Text style={styles.panelSubtitle}>Choose Your Profile Picture</Text>
           </View>
-        )
-    }
+          <TouchableOpacity style={styles.panelButton} onPress={takePhotoFromCamera}>
+            <Text style={styles.panelButtonTitle}>Take Photo</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.panelButton} onPress={choosePhotoFromLibrary}>
+            <Text style={styles.panelButtonTitle}>Choose From Library</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.panelButton}
+            onPress={() => {console.log(bs); bs.current.snapTo(1)}}>
+            <Text style={styles.panelButtonTitle}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
+      );
     
     const renderHeader = () => (
         <View style={styles.header}>
@@ -84,45 +95,70 @@ const ProfileScreen = ({navigation}) => {
     }
 
     return (
-      <View style={styles.container}>
-        <View style={{ alignItems: "center" }}>
-          <TouchableOpacity>
-            <View
-              style={{
-                height: 100,
-                width: 100,
-                borderRadius: 15,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <ImageBackground
-                source={{
-                  uri: image,
-                }}
-                style={{ height: 100, width: 100 }}
-                imageStyle={{ borderRadius: 15 }}
-              >
-              </ImageBackground>
-            </View>
-          </TouchableOpacity>
-          <Text style={{ marginTop: 10, fontSize: 18, fontWeight: "bold" }}>
-            {state.user.firstName} {state.user.lastName}
-          </Text>
+        <View style={styles.container}>
+            <BottomSheet
+                ref={bs}
+                snapPoints={[330, 0]}
+                renderContent={renderInner}
+                renderHeader={renderHeader}
+                initialSnap={1}
+                callbackNode={fall}
+                enabledGestureInteraction={true}
+            />
+            <Animated.View style={{margin: 20,
+                opacity: Animated.add(0.1, Animated.multiply(fall, 1.0)),
+            }}>
+                <View style={{alignItems: 'center'}}>
+                    <TouchableOpacity onPress={() => bs.current.snapTo(0)}>
+                        <View
+                            style={{
+                                height: 100,
+                                width: 100,
+                                borderRadius: 15,
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                            }}>
+                            <ImageBackground
+                                source={{
+                                uri: image,
+                                }}
+                                style={{height: 100, width: 100}}
+                                imageStyle={{borderRadius: 15}}>
+                                <View
+                                style={{
+                                    flex: 1,
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                }}>
+                                <MaterialCommunityIcons
+                                    name="camera"
+                                    size={35}
+                                    color="#fff"
+                                    style={{
+                                        opacity: 0.7,
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        borderWidth: 1,
+                                        borderColor: '#fff',
+                                        borderRadius: 10,
+                                    }}
+                                />
+                                </View>
+                            </ImageBackground>
+                        </View>
+                    </TouchableOpacity>
+                    <Text style={{marginTop: 10, fontSize: 18, fontWeight: 'bold'}}>
+                        {state.user.firstName} {state.user.lastName}
+                    </Text>
+                </View>
+
+                <Button title='Save' onPress={handleUpdate}/>
+                <View style={styles.logOutButton}>
+                    <Button color='red' title='Log Out' onPress={()=>logoutSuccess(dispatch)} />
+                </View>
+            </Animated.View>
         </View>
-        <View>
-          <RenderInner/>
-        </View>
-        <Button title="Save" onPress={handleUpdate} />
-        <View style={styles.logOutButton}>
-          <Button
-            color="red"
-            title="Log Out"
-            onPress={() => logoutSuccess(dispatch)}
-          />
-        </View>
-      </View>
-    );
+    )
 }
 
 const styles = StyleSheet.create({

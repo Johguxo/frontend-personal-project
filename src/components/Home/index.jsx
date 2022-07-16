@@ -16,13 +16,12 @@ import CustomWorld from '../CustomWorld';
 
 const Home = ({ navigation }) => {
   const { state, logOut, loadWorld, getLastNote } = useContext(AppContext);
-  const { authState, dispatch} = useContext(AuthContext);
+  const { dispatch} = useContext(AuthContext);
 
   const [loading, setLoading] = useState(true);
   const [loadingNote, setLoadingNote] = useState(true);
 
   let worldName = 'Crear mi mundo';
-  
   useEffect(()=> {
     loadWorld();
     getLastNote();
@@ -71,7 +70,7 @@ const Home = ({ navigation }) => {
   };
 
   const goToWorld = () => {
-    if (!world) {
+    if (!state.world) {
       navigation.navigate("NewWorld");
     } else {
       navigation.navigate('MyWorldStack')
@@ -122,7 +121,7 @@ const Home = ({ navigation }) => {
     <View style={styles.container}>
     { loading ? (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#185ace" />
+        <ActivityIndicator size={"large"} color="#185ace" />
       </View>
       ) : (
       <>
@@ -147,7 +146,7 @@ const Home = ({ navigation }) => {
         <View style={[styles.body, styles.shadowProp]}>
           { loadingNote ?
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#185ace" />
+              <ActivityIndicator size={"large"} color="#185ace" />
             </View>
           :
             <>
@@ -156,6 +155,7 @@ const Home = ({ navigation }) => {
                 <FlatList
                 style={{marginTop: 10,marginHorizontal:10}}
                 data={state.lastNote.description}
+                keyExtractor={(item, index) => index}
                 renderItem={({ item }) => {return (
                     <View style={{flexDirection: 'row', marginBottom:3}}>
                       <Text>{'\u2022'} </Text>
@@ -195,10 +195,10 @@ const Home = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 20,
+    paddingTop: 40,
     paddingHorizontal: 20,
     backgroundColor: '#F9FBFC',
-
+    marginTop:20,
   },
   header: {
     width: "100%",
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: 'bold',
-    fontSize: 'xx-large',
+    fontSize: 15,
     color: 'cornflowerblue',
     marginBottom: 35,
     marginTop: 10,
