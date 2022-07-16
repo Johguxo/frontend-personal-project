@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     },
     title: {
       fontWeight: 'bold',
-      fontSize: 'xx-large',
+      fontSize: 15,
       color: 'cornflowerblue'
     },
     logo: {

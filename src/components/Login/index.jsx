@@ -27,7 +27,7 @@ const LogIn = ({ navigation }) => {
           .required('La contraseña es requerida'),
     });
 
-    const initialValues = {
+    const initialValues = { 
       email: '',
       password: ''
     }

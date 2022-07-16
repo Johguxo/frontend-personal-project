@@ -44,7 +44,8 @@ const MyWorld = ({ navigation }) => {
       </View>
       <FlatList
             data={item.data}
-            renderItem={({ item }) => {return (<Text>{item}</Text>)}}
+            listKey={(item2, index) => 'D' + index.toString()}
+            renderItem={({ item2 }) => {return (<Text>{item2}</Text>)}}
       />
     </View>
   );
@@ -65,7 +66,7 @@ const MyWorld = ({ navigation }) => {
           numColumns={2}
           data={listContainers}
           renderItem={renderItem}
-          keyExtractor={item => item.id}
+          listKey={(item) => item.id}
         />
       </View>
       <View style={styles.footer}>  
@@ -80,7 +81,7 @@ const MyWorld = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 10,
+    paddingTop: 40,
     paddingHorizontal: 20,
     backgroundColor: "#F9FBFC",
   },
@@ -89,13 +90,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: "bold",
-    fontSize: "xx-large",
+    fontSize: 15,
     color: "cornflowerblue",
     marginTop: 10,
     textAlign: "center",
   },
   subtitle: {
-    fontSize: "large",
+    fontSize: 10,
     color: "cornflowerblue",
     marginBottom: 10,
     textAlign: "center",
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
   button_text: {
     color: "white",
     fontWeight: "bold",
-    fontSize: "large",
+    fontSize: 10,
 
   },
   containerList: {

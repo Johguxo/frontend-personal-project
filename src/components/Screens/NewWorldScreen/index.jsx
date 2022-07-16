@@ -45,7 +45,7 @@ const NewWorldScreen = ({navigation}) => {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      paddingTop: 20,
+      paddingTop: 40,
       paddingHorizontal: 20,
       backgroundColor: '#F9FBFC',
 
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     },
     title: {
       fontWeight: 'bold',
-      fontSize: 'xx-large',
+      fontSize: 15,
       color: 'cornflowerblue',
       marginBottom: 35,
       marginTop: 10,

@@ -55,11 +55,12 @@ const styles = StyleSheet.create({
     top: "35%",
 
     fontWeight: "bold",
-    fontSize: "x-large",
+    fontSize: 18,
     color: "cornflowerblue",
+    textAlign: "center",
   },
   titleLarge: {
-    fontSize: "large",
+    fontSize: 10,
   },
   subtitle: {},
 });
