@@ -1,20 +1,25 @@
-import React, { useContext } from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { View, Image, StyleSheet, useWindowDimensions, Button } from 'react-native'
+import * as yup from "yup";
 
 import { Formik, useField } from 'formik';
 
 import Logo from '../../../assets/logo.png'
+
 import CustomInput from '../CustomInput'
 import CustomButton from '../CustomButton'
 import CustomText from '../CustomText';
 
-import * as yup from "yup";
-import { AuthContext } from '../../contexts/AuthContext';
-import { login } from '../../hooks/auth/ApiCalls';
+import defaultStyles from '../../styles/defaultStyles'
+
+import { loadUser, login, logout } from '../../redux/actions/authActions'
 
 const LogIn = ({ navigation }) => {
 
-    const { state, dispatch } = useContext(AuthContext)
+    const dispatch = useDispatch()
+
+    const authState = useSelector(state => state.auth)
 
     const validationSchema = yup.object({
         email: yup
@@ -33,13 +38,15 @@ const LogIn = ({ navigation }) => {
     }
 
     const singIn = (values) => {
-      setTimeout(() => {
-        const { email, password } = values
-        login({email, password}, dispatch)
-      }, 10);
+      dispatch(login(values))
     }
 
-    const {height} = useWindowDimensions();
+    useEffect(()=> {
+      if (authState.error) {
+        dispatch(logout());
+      }
+    }, [authState]);
+
 
     const FormikInputValue = ({name, ...props}) => {
       const [field, meta, helpers] = useField(name)
@@ -63,7 +70,7 @@ const LogIn = ({ navigation }) => {
 
     const ErrorText = () => {
       return (
-        state.error? (
+        authState.error? (
           <CustomText style={styles.error}>
                 Email or Password are invalid 
               </CustomText>
@@ -72,13 +79,17 @@ const LogIn = ({ navigation }) => {
         )
       );
     };
+
+    
+    const {height} = useWindowDimensions();
+
     const stylesLogo = [
       styles.logo, 
       {height: height*0.3}
     ]
 
     return (
-        <View style={styles.container}>
+        <View style={defaultStyles.container}>
             <Image 
               source={Logo} 
               style={stylesLogo} 
@@ -122,12 +133,6 @@ const LogIn = ({ navigation }) => {
     )
 }
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#F9FBFC',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
     form: {
       width: '80%'
     },

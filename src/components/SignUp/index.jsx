@@ -1,18 +1,18 @@
 import React, {useContext} from 'react'
 import { View, StyleSheet, Text } from 'react-native'
-
+import * as yup from "yup";
+import { useDispatch } from 'react-redux';
 import { Formik, useField } from 'formik';
+
 import CustomInput from '../CustomInput'
 import CustomButton from '../CustomButton'
 import CustomText from '../CustomText';
+import { register } from '../../redux/actions/authActions';
 
-import * as yup from "yup";
-import { register } from '../../hooks/auth/ApiCalls';
-import { AuthContext } from '../../contexts/AuthContext';
 
 const SignUp = ({ navigation }) => {
 
-    const { state, dispatch } = useContext(AuthContext)
+    const dispatch = useDispatch();
 
     const validationSchema = yup.object({
         firstName: yup
@@ -64,9 +64,7 @@ const SignUp = ({ navigation }) => {
     }
 
     const registerSubmit = (values) => {
-      setTimeout(() => {
-        register(values, dispatch)
-      }, 10);
+      dispatch(register(values));
     }
 
     return (

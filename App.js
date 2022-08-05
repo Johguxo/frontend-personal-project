@@ -1,13 +1,15 @@
 import React from 'react';
+
 import MainStack from './src/navigation/MainStack';
-import { useAuth } from './src/hooks/useAuth';
-import { AuthContext } from './src/contexts/AuthContext';
+
+import store from './src/redux/store';
+import { Provider } from 'react-redux';
 
 export default function App() {
-  const { state, dispatch } = useAuth();
+
   return (
-    <AuthContext.Provider value={{state,dispatch}}>
+    <Provider store = { store }>
       <MainStack/>
-    </AuthContext.Provider>
+    </Provider>
   );
 }

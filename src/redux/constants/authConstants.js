@@ -1,0 +1,12 @@
+export const USER_LOADED = "@user/loaded"
+export const USER_LOADING = "@user/loading"
+export const USER_FAILURE = "@user/failure";
+export const LOGIN_START = "@user/login_start";
+export const LOGIN_SUCCESS = "@user/login_success";
+export const LOGIN_FAILURE = "@user/login_failure";
+export const REGISTER_SUCCESS = "@user/register_success";
+export const REGISTER_FAILURE = "@user/register_failure";
+export const UPDATE_PROFILE_START = "@user/update_profile_start";
+export const UPDATE_PROFILE_SUCCESS = "@user/update_profile_success";
+export const UPDATE_PROFILE_FAILURE = "@user/update_profile_failure";
+export const LOGOUT = "@user/logout";

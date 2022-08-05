@@ -1,0 +1,9 @@
+export const GET_FAVS_START = "@favs/get_list_start"
+export const GET_FAVS_SUCCESS = "@favs/get_list_success";
+export const GET_FAVS_FAILURE = "@favs/get_list_failure";
+export const UPDATE_ITEM_FAV_SUCCESS = "@favs/update_item_success";
+export const UPDATE_ITEM_FAV_FAILURE = "@favs/update_item_failure";
+export const ADD_ITEM_FAV_SUCCESS = "@favs/add_item_success";
+export const ADD_ITEM_FAV_FAILURE = "@favs/add_item_failure";
+export const NEW_FAV_SUCCESS = "@favs/new_success";
+export const NEW_FAV_FAILURE = "@favs/new_failure";

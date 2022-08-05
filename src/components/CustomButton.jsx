@@ -29,7 +29,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgb(33, 150, 243)',
     },
     container_TERTIARY: {
-
+    },
+    container_DANGER: {
+        backgroundColor: 'red',
     },
     text: {
         fontWeight: 'bold',

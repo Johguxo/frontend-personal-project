@@ -1,30 +1,31 @@
-import React, {useContext} from 'react'
+import React, {useContext, useEffect} from 'react'
+import {useSelector, useDispatch} from 'react-redux'
+
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { NavigationContainer } from '@react-navigation/native'
 
 import AuthStackNavigator from './AuthStackNavigator'
 import FullStackNavigator from './FullStackNavigator'
-
-import { AppContext } from '../contexts/AppContext';
-import { AuthContext } from '../contexts/AuthContext'
-
-import { useAppState } from '../hooks/useAppState'
+import { loadUser } from '../redux/actions/authActions'
 
 const Stack = createNativeStackNavigator()
 
 const MainStack = () => {
 
-  const {state} = useContext(AuthContext)
+  const authState = useSelector(state => state.auth)
+  
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(loadUser())
+  },[])
+
   const renderScreens = () => {
-    const initialState = useAppState();
-    return state.user ? (
-      <Stack.Screen name='FullStackNavigator'>
-        {() => (
-          <AppContext.Provider value={initialState}>
-            <FullStackNavigator />
-          </AppContext.Provider>
-        )}
-      </Stack.Screen>
+    return authState.user ? (
+      <Stack.Screen 
+        name='FullStackNavigator'
+        component={FullStackNavigator}
+      />
     ) : (
       <Stack.Screen
         name='AuthStack'
