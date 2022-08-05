@@ -1,6 +1,8 @@
 import React, {useContext, useState, useEffect} from 'react'
 import { Text, View, Button, StyleSheet, Image } from 'react-native'
+import { useDispatch, useSelector } from 'react-redux';
 import { AppContext } from '../../../contexts/AppContext';
+import { saveWorld } from '../../../redux/actions/worldActions';
 import CustomInput from '../../CustomInput';
 
 
@@ -9,19 +11,27 @@ const NewWorldScreen = ({navigation}) => {
         name:'',
         description:'',
     }
-    const {saveWorld } = useContext(AppContext);
-    const [world, setWorld] = useState(worldInitial);
-    const [loading, setLoading] = useState(true);
 
-    const pressSaveWorld = ()=> {
-        setLoading(true);
-        saveWorld(world)
-        .then(()=>{
-          setLoading(false);
-          navigation.goBack();
-          }
-        )
+    const dispatch = useDispatch();
+    const worldState = useSelector(state => state.world);
+    const [world, setWorld] = useState(worldInitial);
+
+
+    const pressSaveWorld = () => {
+      dispatch(saveWorld(world));
     }
+
+    useEffect(() => {
+      if (worldState.error) {
+        if (worldState.errorResponse.status == 401) {
+          ToastAndroid.show(
+            `Error: ${worldState.errorResponse.statusText}`,
+            ToastAndroid.LONG
+          );
+          dispatch(logout());
+        }
+      }
+    }, [worldState]);
     return (
         <View style={styles.container}>
 

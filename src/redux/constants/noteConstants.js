@@ -1,0 +1,11 @@
+export const GET_NOTE_START = "@note/get_start"
+export const GET_NOTE_SUCCESS = "@note/get_success";
+export const GET_NOTE_FAILURE = "@note/get_failure";
+export const GET_LIST_NOTE_START = "@note/get_list_start"
+export const GET_LIST_NOTE_SUCCESS = "@note/get_list_success";
+export const GET_LIST_NOTE_FAILURE = "@note/get_list_failure";
+export const UPDATE_NOTE_START = "@note/save_start";
+export const UPDATE_NOTE_SUCCESS = "@note/save_success";
+export const UPDATE_NOTE_FAILURE = "@note/save_failure";
+export const NEW_NOTE_SUCCESS = "@note/new_success";
+export const NEW_NOTE_FAILURE = "@note/new_failure";

@@ -1,61 +1,59 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React, {useContext,useState, useEffect} from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+
 import { 
   Text, 
   View, 
   StyleSheet, 
   Image, 
-  TouchableOpacity, 
-  ActivityIndicator,
-  FlatList } from 'react-native'
+  TouchableOpacity,
+  FlatList, 
+  ToastAndroid
+} from 'react-native'
 
-import { AppContext } from '../../contexts/AppContext'
-import { AuthContext } from '../../contexts/AuthContext';
-import { logoutSuccess } from '../../hooks/auth/ApiCalls';
 import CustomWorld from '../CustomWorld';
+import { loadWorld } from '../../redux/actions/worldActions';
+import { loadLastNote } from '../../redux/actions/noteActions';
+import { logout } from '../../redux/actions/authActions';
+import CustomIndicator from '../CustomIndicator';
 
 const Home = ({ navigation }) => {
-  const { state, logOut, loadWorld, getLastNote } = useContext(AppContext);
-  const { dispatch} = useContext(AuthContext);
+  const worldState = useSelector(state => state.world)
+  const authState = useSelector(state => state.auth)
+  const noteState = useSelector(state => state.note)
 
-  const [loading, setLoading] = useState(true);
-  const [loadingNote, setLoadingNote] = useState(true);
-
+  const dispatch = useDispatch();
+  
   let worldName = 'Crear mi mundo';
+
   useEffect(()=> {
-    loadWorld();
-    getLastNote();
+    dispatch(loadWorld(authState.user._id));
+    dispatch(loadLastNote(authState.user._id));
   },[])
 
   useEffect(()=> {
-    if(!state.error && state.world) {
-      if (state.world) {
-        worldName = state.world.name;
+    if(!worldState.error && worldState.world) {
+      if (worldState.world) {
+        worldName = worldState.world.name;
       }
     }
-    if (state.error) {
-      if (state.error.status == 401) {
-        logoutSuccess(dispatch);
-        logOut();
+    if (worldState.error) {
+      if (worldState.errorResponse.status == 401) {
+        ToastAndroid.show(`Error: ${worldState.errorResponse.statusText}`, ToastAndroid.LONG);
+        dispatch(logout());
       }
     }
-    setLoading(false);
-  }, [state]);
+  }, [worldState]);
 
   useEffect(()=> {
-    if(!state.error && state.lastNote) {
-      setLoadingNote(false);
-    }
-    if (state.error) {
-      if (state.error.status == 401) {
-        logoutSuccess(dispatch);
-        logOut();
-      }
-      if (state.error.status == 404) {
-        setLoadingNote(false);
+    if (noteState.error) {
+      if (noteState.errorResponse.status == 401) {
+        ToastAndroid.show(`Error: ${noteState.errorResponse.statusText}`, ToastAndroid.LONG);
+        dispatch(logout());
       }
     }
-  }, [state]);
+  }, [noteState]);
 
   const goToNotification = () => {
     navigation.navigate("Notifications");
@@ -70,7 +68,7 @@ const Home = ({ navigation }) => {
   };
 
   const goToWorld = () => {
-    if (!state.world) {
+    if (!worldState.world) {
       navigation.navigate("NewWorld");
     } else {
       navigation.navigate('MyWorldStack')
@@ -80,12 +78,17 @@ const Home = ({ navigation }) => {
   const LeftAlignedComponent = () => {
     return (
       <View style={styles.leftAlignedContainer}>
-        <TouchableOpacity onPress={goToNotification} style={styles.iconButtonContainer}>
+        <Text style={{fontWeight:'bold',fontSize: 20}}>{authState.user.firstName}</Text>
+        {/*<TouchableOpacity 
+          onPress={goToNotification} 
+          style={styles.iconButtonContainer}>
           <MaterialCommunityIcons name="bell" size={26}/>
         </TouchableOpacity>
-        <TouchableOpacity onPress={goToChat} style={styles.iconButtonContainer}>
+        <TouchableOpacity 
+          onPress={goToChat} 
+          style={styles.iconButtonContainer}>
           <MaterialCommunityIcons name="forum" size={26}/>
-        </TouchableOpacity>
+       </TouchableOpacity>*/}
       </View>
     )
   }
@@ -94,12 +97,21 @@ const Home = ({ navigation }) => {
     return (
       <View style={styles.rightAlignedContainer}>
         <TouchableOpacity onPress={goToProfile}>
+          {authState.user
+          ?
           <Image
             source={{
-              uri: "https://yt3.ggpht.com/yti/APfAmoHc6CeFgdU1gGGq2ZiQ23ZHIb1m4kKiC7Hb6pfj_JA=s88-c-k-c0x00ffffff-no-rj-mo",
+              uri: authState.user.image,
             }}
             style={styles.pic}
           />
+          :<Image
+            source={{
+              uri: 'https://res.cloudinary.com/johguxo-gonzales/image/upload/v1656618838/nauta_ledvrn.png',
+            }}
+            style={styles.pic}
+          />}
+          
         </TouchableOpacity>
       </View>
     )
@@ -119,10 +131,8 @@ const Home = ({ navigation }) => {
   return (
     
     <View style={styles.container}>
-    { loading ? (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size={"large"} color="#185ace" />
-      </View>
+    { worldState.isFetching ? (
+      <CustomIndicator />
       ) : (
       <>
         <View style={styles.header}>
@@ -131,9 +141,9 @@ const Home = ({ navigation }) => {
         </View>
         <TouchableOpacity 
         onPress={()=>goToWorld()}>
-          { state.world ?
+          { worldState.world ?
                 <CustomWorld  
-                title={state.world.name} 
+                title={worldState.world.name} 
                 subtitle='Johann Gonzales' 
                 size={200}/>
               :
@@ -144,27 +154,27 @@ const Home = ({ navigation }) => {
           }
         </TouchableOpacity>
         <View style={[styles.body, styles.shadowProp]}>
-          { loadingNote ?
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size={"large"} color="#185ace" />
-            </View>
+          { noteState.isFetching ?
+            <CustomIndicator />
           :
             <>
               <Text style={styles.titleNote}>Notas del {nowDate}</Text> 
-              { state.lastNote ?
+              { noteState.lastNote ?
                 <FlatList
                 style={{marginTop: 10,marginHorizontal:10}}
-                data={state.lastNote.description}
+                data={noteState.lastNote.description}
                 keyExtractor={(item, index) => index}
-                renderItem={({ item }) => {return (
+                renderItem={({ item }) => {
+                  return (
                     <View style={{flexDirection: 'row', marginBottom:3}}>
                       <Text>{'\u2022'} </Text>
                       <Text style={{overflow: 'hidden'}}>{item}</Text>
-                    </View>)}
+                    </View>)
                   }
+                }
               />
               :
-                <Text>No hay notas</Text>
+                <Text style={{marginHorizontal: 10}}>No hay notas el día de hoy D:</Text>
               }
             </>
           }
@@ -180,7 +190,7 @@ const Home = ({ navigation }) => {
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.buttonMoreNotes} 
-          onPress={()=>console.log("All Notes")}>
+          onPress={()=>navigation.navigate('ListNotes')}>
           <Text 
             style={{textAlign:'center',color:'black',fontWeight: 'bold',}}>
             Ver Notas Anteriores
@@ -205,7 +215,7 @@ const styles = StyleSheet.create({
     height: 50,
     top: 0,
     paddingBottom: 15,
-    backgroundColor: "#fff",
+    backgroundColor: "#F9FBFC",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -229,11 +239,6 @@ const styles = StyleSheet.create({
     //color: '#fff',
     textAlign: 'center',
     marginTop: 10,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   iconButtonContainer: {
     marginRight: 24,

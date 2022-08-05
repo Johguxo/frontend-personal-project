@@ -4,7 +4,7 @@ import axios from "axios";
 import {BASE_URL} from '../config';
 
 const INITIAL_STATE = {
-  user:null,
+  user: null,
   world: null,
   lastNote: null,
   listNotes: [],
@@ -14,38 +14,61 @@ const INITIAL_STATE = {
 export function useAppState() {
   const [state, setState] = useState(INITIAL_STATE);
 
+  const loadUser = async (data) => {
+    try {
+      setState({ ...state, user: {image:"sss"} });
+      if (data.user) {
+        setState((prevState) => ({
+          ...prevState,
+          user : data.user,
+          error: null,
+        }));
+        const res = await axios.get(`${BASE_URL}/auth/local/info/${data.user._id}`)
+        setState((prevState) => ({
+          ...prevState,
+          user : res.data.data,
+          error: null,
+        }));
+      }
+    } catch (err) {
+      setState({
+        ...state,
+        error: err.response
+      })
+    }
+  }
+
   const updateUser = async (payload) => {
     try {
+      const {firstName,lastName,uri} = payload
       const formData = new FormData();
       if (payload.firstName) { formData.append('firstName', payload.firstName) }
       if (payload.lastName) { formData.append('lastName', payload.lastName) }
       formData.append('_id', state.user._id)
       if (payload.uri) {
-        formData.append('image',{
+        formData.append('fileData',{
           uri: payload.uri,
           name: payload.uri.split('/').pop(),
           type: `image/${payload.uri.split('.').pop()}`,
         })
-        console.log("dos")
-        console.log("tres")
-        //formData.append('image', payload.uri, `image/${state.user._id}`)
       }
 
       const baseUrl = `${BASE_URL}/auth/local/${state.user._id}`
-      console.log(baseUrl)
       const res = await axios.put(baseUrl, 
         formData, 
         { headers:{
-          'Content-Type': 'multipart/form-data',
-          'Authorization':`Bearer ${state.user.token}` },
-      });
+          'Content-Type': 'multipart/form-data; boundary=some string'
+        },
+        });
       setState((prevState) => ({
         ...prevState,
-        user: res.data.data,
+        user : {
+          ...prevState.user,
+          image: res.data.data.image,
+        },
         error: null,
       }));
     } catch (err) {
-      console.log(err)
       setState({
         ...state,
         error: err.response
@@ -150,7 +173,6 @@ export function useAppState() {
 
   const updateNote = async (note, newBody) => {
     const {_id} = note;
-    console.log(newBody)
     const {title, description} = newBody;
     
     try {
@@ -172,6 +194,7 @@ export function useAppState() {
 
   return {
     state,
+    loadUser,
     updateUser,
     logOut,
     loadWorld,

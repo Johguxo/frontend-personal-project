@@ -1,13 +1,16 @@
-import React, {useContext,useState} from 'react'
-import { Text, View, Button, StyleSheet, Image, TextInput } from 'react-native'
-import { AppContext } from '../../../contexts/AppContext';
+import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { View, Button, StyleSheet, Image, TextInput } from 'react-native'
 
+import { newNote, updateNote } from '../../../redux/actions/noteActions'
+import { logout, updateProfile } from '../../../redux/actions/authActions'
 
-const AddNoteScreen = ({navigation, route}) => {
+const AddNoteScreen = ({navigation}) => {
+
+    const dispatch = useDispatch()
+    const noteState = useSelector(state => state.note)
 
     const [text,setText] = useState('');
-    const { state, logOut, newNote, updateNote } = useContext(AppContext);
-
 
     const dateFormat = () => {
         const dateFormatted = new Date();
@@ -20,11 +23,10 @@ const AddNoteScreen = ({navigation, route}) => {
     const nowDate = dateFormat()
 
     const newOrEditNote = () => {
-        if (state.lastNote) {
-            state.lastNote.description.push(text)
-            updateNote(state.lastNote, {description: state.lastNote.description})
+        if (noteState.lastNote) {
+            dispatch(updateNote(noteState.lastNote, {title:noteState.lastNote.title, description: [...noteState.lastNote.description, text]}))
         } else {
-            newNote({title: nowDate, description: [text]})
+            dispatch(newNote({title: nowDate, description: [text]}))
         }
         navigation.goBack();
     }
@@ -38,7 +40,7 @@ const AddNoteScreen = ({navigation, route}) => {
                 multiline={true}
                 value={text} 
             />
-            <Button title='Add' onPress={()=>newOrEditNote()}/>
+            <Button title='Add' onPress={()=>newOrEditNote()} disabled={text === ''}/>
         </View>
     )
 }

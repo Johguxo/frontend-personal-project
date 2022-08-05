@@ -1,7 +1,8 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useContext } from "react";
 
 import AuthReducer from './auth/AuthReducer';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { AppContext } from "../contexts/AppContext";
 
 const getUser = async () => {
     try {
@@ -13,31 +14,40 @@ const getUser = async () => {
 }
 
 const removeUser = async () => {
-    await AsyncStorage.removeItem('auth-user')
+    await AsyncStorage.removeItem('auth-user');
+
 }
 const INITIAL_STATE = {
-    user: getUser().then(user=>{
+    /*user: getUser().then(user=>{
                 if (user) {
-                    return JSON.parse(user)
+                    if (user._W == undefined) {
+                        console.log("-----------")
+                        removeUser();
+                        return null
+                    } else {
+                        return JSON.parse(user)
+                    }
                 } else {
                     removeUser();
                     return null
                 }
-            }) || null,
+            }) || null,*/
+    user: null,
     isFetching: false,
     error: false,
 };
 
 export function useAuth() {
-    const [state, dispatch] = useReducer(AuthReducer, INITIAL_STATE);
+    const [authState, dispatch] = useReducer(AuthReducer, INITIAL_STATE);
+    
     const setUser = async () => {
-        if (state.user) {
-            await AsyncStorage.setItem("auth-user", JSON.stringify(state.user));
+        if (authState.user) {
+            await AsyncStorage.setItem("auth-user", JSON.stringify(authState.user));
         }
     }
     useEffect(() => {
         setUser();
-    }, [state.user]);
+    }, [authState.user]);
 
-    return { state, dispatch };
+    return { authState, dispatch };
 }

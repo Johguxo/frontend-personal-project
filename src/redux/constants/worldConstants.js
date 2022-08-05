@@ -1,0 +1,9 @@
+export const GET_WORLD_START = "@world/get_start"
+export const GET_WORLD_SUCCESS = "@world/get_success";
+export const GET_WORLD_FAILURE = "@world/get_failure";
+export const SAVE_WORLD_START = "@world/save_start";
+export const SAVE_WORLD_SUCCESS = "@world/save_success";
+export const SAVE_WORLD_FAILURE = "@world/save_failure";
+export const UPDATE_WORLD_START = "@world/update_start";
+export const UPDATE_WORLD_SUCCESS = "@world/update_success";
+export const UPDATE_WORLD_FAILURE = "@world/update_failure";

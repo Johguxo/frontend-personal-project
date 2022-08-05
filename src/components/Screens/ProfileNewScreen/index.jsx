@@ -105,8 +105,9 @@ const ProfileScreen = ({navigation}) => {
                 callbackNode={fall}
                 enabledGestureInteraction={true}
             />
-            <Animated.View style={{margin: 20,
-                opacity: Animated.add(0.1, Animated.multiply(fall, 1.0)),
+            <Animated.View style={{
+              margin: 20,
+              opacity: Animated.add(0.1, Animated.multiply(fall, 1.0)),
             }}>
                 <View style={{alignItems: 'center'}}>
                     <TouchableOpacity onPress={() => bs.current.snapTo(0)}>
