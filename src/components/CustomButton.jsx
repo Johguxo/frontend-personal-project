@@ -43,6 +43,9 @@ const styles = StyleSheet.create({
     },
     text_TERTIARY: {
         color: 'grey'
+    },
+    text_DANGER: {
+        color: 'white'
     }
 });
 

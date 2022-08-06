@@ -16,22 +16,22 @@ const SignUp = ({ navigation }) => {
 
     const validationSchema = yup.object({
         firstName: yup
-          .string('Ingrese su nombre')
-          .min(3, 'El nombre debe tener como mínimo 3 caracteres')
-          .required('El nombre es requerido'),
+          .string('Insert your first name')
+          .min(3, 'Min. 3 characters')
+          .required('First name is required'),
         lastName: yup
-          .string('Ingrese sus apellidos')
-          .required('Los apellidos son requeridos'),
+          .string('Insert your last name')
+          .required('Last name is required'),
         email: yup
-          .string('Ingrese su correo electronico')
-          .email('Ingrese un correo electronico correcto')
-          .required('El correo electronico es requerido'),
+          .string('Insert your email')
+          .email('Email is not valid')
+          .required('Email is required'),
         password: yup
-          .string('Ingrese su  contraseña')
-          .min(5, 'La contraseña debería tener como mínimo 5 caracteres')
-          .required('La contraseña es requerida'),
+          .string('Insert your password')
+          .min(5, 'Min. 5 characters')
+          .required('Password is required'),
         confirmPassword: yup
-          .string('Ingrese nuevamente la contraseña')
+          .string('Repeat your password')
           .oneOf([yup.ref('password'),null], 'Passwords must match'),
     });
 
@@ -135,8 +135,9 @@ const styles = StyleSheet.create({
     },
     title: {
       fontWeight: 'bold',
-      fontSize: 15,
-      color: 'cornflowerblue'
+      fontSize: 30,
+      color: 'cornflowerblue',
+      marginBottom: 10,
     },
     logo: {
       width: '70%',
