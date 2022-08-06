@@ -1,7 +1,7 @@
 # To Do (React Native)
 
 <p align="center">
-  <img src="doc/world.png" width="300" alt="App Screenshot">
+  <img src="doc/world.jpeg" width="300" alt="App Screenshot">
 </p>
 
 ## About the Project
