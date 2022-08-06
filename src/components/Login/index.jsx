@@ -23,13 +23,13 @@ const LogIn = ({ navigation }) => {
 
     const validationSchema = yup.object({
         email: yup
-          .string('Ingrese su correo electronico')
-          .email('Ingrese un correo electronico correcto')
-          .required('El correo electronico es requerido'),
+          .string('Insert your email')
+          .email('Email is not valid')
+          .required('Email is required'),
         password: yup
-          .string('Ingrese su  contraseña')
-          .min(5, 'La contraseña debería tener como mínimo 5 caracteres')
-          .required('La contraseña es requerida'),
+          .string('Insert your password')
+          .min(5, 'Min. 5 characters')
+          .required('Password is required'),
     });
 
     const initialValues = { 
@@ -40,12 +40,6 @@ const LogIn = ({ navigation }) => {
     const singIn = (values) => {
       dispatch(login(values))
     }
-
-    useEffect(()=> {
-      if (authState.error) {
-        dispatch(logout());
-      }
-    }, [authState]);
 
 
     const FormikInputValue = ({name, ...props}) => {
@@ -70,7 +64,7 @@ const LogIn = ({ navigation }) => {
 
     const ErrorText = () => {
       return (
-        authState.error? (
+        authState.error ? (
           <CustomText style={styles.error}>
                 Email or Password are invalid 
               </CustomText>

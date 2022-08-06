@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { View, StyleSheet, FlatList, Text } from 'react-native'
+import { View, StyleSheet, FlatList, Text, TouchableOpacity } from 'react-native'
 
 import CustomIndicator from '../../CustomIndicator'
 import { loadNotes } from '../../../redux/actions/noteActions'
@@ -18,7 +18,6 @@ const ListNotesScreen = ({navigation}) => {
     const renderNote = ({ item }) => {
       return (
         <View style={styles.containerBox}>
-          <View styles={styles.containerNote}>
               <Text style={styles.titleNote} key={item.title}>{item.title}</Text>
               <FlatList
                 data={item.description}
@@ -30,29 +29,31 @@ const ListNotesScreen = ({navigation}) => {
                     </View>)
                   }
                 }
-                listKey={(item, index) => `_key${index.toString()}`}
-                keyExtractor={(item, index) => `_key${index.toString()}`}
+                listKey={(item, index) => `second_key${index.toString()}`}
+                keyExtractor={(item, index) => `second_key${index.toString()}`}
               />
-          </View>
         </View>
     )};
 
     return (
         <View style={styles.container}>
-          { noteState.isFetching ?
-            <CustomIndicator />
-          : (
-            noteState.notes.length > 0 ? (
-              <FlatList
-                numColumns={2}
-                data={noteState.notes}
-                renderItem={renderNote}
-                keyExtractor={(item) => item._id}
-              />
-            ): (
-              <Text>No hay notas</Text>
-            )
-          )}
+          <View style={styles.body}>
+            { noteState.isFetching ?
+              <CustomIndicator />
+            : (
+              noteState.notes.length > 0 ? (
+                <FlatList
+                  numColumns={2}
+                  data={noteState.notes}
+                  renderItem={renderNote}
+                  listKey={(item) => item._id}
+                  keyExtractor={(item, index) => `first_key${index.toString()}`}
+                />
+              ): (
+                <Text style={styles.textDefault}>No hay lista de favoritos</Text>
+              )
+            )}
+          </View>
         </View>
     )
 }
@@ -64,12 +65,20 @@ const styles = StyleSheet.create({
       paddingHorizontal: 20,
       backgroundColor: '#F9FBFC',
     },
+    body: {
+      flex: 1,
+    },
     titleNote: {
       fontSize: 20,
       fontWeight: 'bold',
       textAlign: 'center',
       marginTop: 10,
     }, 
+    textDefault: {
+      fontSize: 10,
+      fontWeight: "bold",
+      textAlign: "center",
+    },
     containerNoteFull: {
       flex: 1,
       marginBottom: 20,
@@ -87,12 +96,9 @@ const styles = StyleSheet.create({
     },
     containerBox: {
       flex: 1,
-
-    },  
-    containerNote : {
-      backgroundColor: "white",
-      width: "90%",
-
+      backgroundColor: "rgb(255, 194, 82)",
+      width: "50%",
+      
       borderColor: "#e8e8e8",
       borderWidth: 1,
       borderRadius: 5,
@@ -101,7 +107,7 @@ const styles = StyleSheet.create({
       paddingVertical: 10,
       marginVertical: 5,
       marginRight: 5,
-    }
+    },
 });
 
 export default ListNotesScreen

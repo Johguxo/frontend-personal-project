@@ -88,10 +88,14 @@ const MyWorld = ({ navigation }) => {
         <FlatList
           data={item.list}
           renderItem={({ item }) => {
-            return <Text>{item.title}</Text>;
+            return (
+              <View style={{flexDirection: 'row', marginBottom:3}}>
+                <Text>{'\u2022'} </Text>
+                <Text style={{overflow: 'hidden'}}>{item.title}</Text>
+              </View>)
           }}
-          listKey={(item, index) => `_key${index.toString()}`}
-          keyExtractor={(item, index) => `_key${index.toString()}`}
+          listKey={(item, index) => `second_key${index.toString()}`}
+          keyExtractor={(item, index) => `second_key${index.toString()}`}
         />
       </View>
     </TouchableOpacity>
@@ -113,15 +117,18 @@ const MyWorld = ({ navigation }) => {
             <MaterialCommunityIcons name={"pencil"} size={20} color="white" />
           </TouchableOpacity>
         </View>
-        {favsState.favs.length == 0 ? (
-          <Text style={styles.textDefault}>No hay lista de favoritos</Text>
-        ) : (
-          <FlatList
-            numColumns={2}
-            data={favsState.favs}
-            renderItem={renderItem}
-            listKey={(item) => item._id}
-          />
+        {favsState.isFetching ? <CustomIndicator /> : (
+          favsState.favs.length == 0 ? (
+            <Text style={styles.textDefault}>No hay lista de favoritos</Text>
+          ) : (
+            <FlatList
+              numColumns={2}
+              data={favsState.favs}
+              renderItem={renderItem}
+              listKey={(item) => item._id}
+              keyExtractor={(item, index) => `first_key${index.toString()}`}
+            />
+          )
         )}
       </View>
       <View style={styles.footer}>

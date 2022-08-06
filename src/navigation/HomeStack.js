@@ -50,12 +50,12 @@ const HomeStackNavigator = () => {
         />
         <HomeStack.Screen
           name='AddNote'
-          options = {{title: 'Nota'}}
+          options = {{title: 'Add Note'}}
           component={AddNoteScreen}
         />
         <HomeStack.Screen
           name='ListNotes'
-          options = {{title: 'Lista de Notas'}}
+          options = {{title: 'List of Notes'}}
           component={ListNotesScreen}
         />
       </HomeStack.Navigator>

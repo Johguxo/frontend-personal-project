@@ -204,13 +204,11 @@ const ProfileScreen = ({ navigation }) => {
             </Text>
           </View>
         </TouchableOpacity>
-        <View style={styles.logOutButton}>
           <CustomButton
             text="Log Out"
             type="DANGER"
             onPress={() => dispatch(logout())}
           />
-        </View>
       </Animated.View>
     </View>
   );
@@ -315,7 +313,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-evenly",
     alignItems: "center",
-    height: 50,
+    
+    height: 40,
+    marginTop: 10,
+    marginBottom: 10,
+
     borderWidth: 1,
     borderColor: "#666",
     borderRadius: 10,
@@ -324,9 +326,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
     fontSize: 20,
-  },
-  logOutButton: {
-    marginTop: 20,
   },
 });
 
